@@ -39,6 +39,7 @@ bool tokens(char *word) {
             return false;
     }
 }
+int foreground_default_status = 0;
 //array of ptrs to strings with size 512, used to store each word parsed from input
 char *words[MAX_WORDS];
 // returns size_t
@@ -98,6 +99,52 @@ int main(int argc, char *argv[])
             words[i] = exp_word;
             // print expanded word to error stream
             fprintf(stderr, "Expanded Word %zu: %s\n", i, words[i]);
+        }
+        // arguments passed to the shell
+        if (nwords > 0) {
+            // check if exit was typed
+            if (strcmp(words[0], "exit") == 0) {
+                // check if there was more than one arg passed w exit
+                if (nwords > 2) {
+                    fprintf(stderr, "exit: too many args passed w exit, only one allowed!");
+                    return 1;
+                } else {
+                    if (nwords == 1) {
+                        return foreground_default_status;
+                    } else {
+                        // handle the case if argument is not an integer
+                        size_t argumentLen = strlen(words[1]);
+                        for (size_t i = 0; i< argumentLen; ++i){
+                            if (!isdigit(words[1][i])) {
+                                fprintf(stderr, "exit: arg is not an int and it should be!!!");
+                                return 1;
+                            }
+                        }
+                        // got to convert the arg to integer
+                        int exit_status =  atoi(words[1]);
+                        return exit_status;
+                    }
+                }
+            // handle the cd command
+            } else if (strcmp(words[0], "cd") == 0) {
+                // if there was no argument provided
+                if (nwords == 1) {
+                   if (chdir(getenv("HOME")) != 0) {
+                       perror("cd");
+                       return 2;
+                   }
+                }
+                // more than one arg provided, throw error
+                if (nwords > 2) {
+                    fprintf(stderr, "cd: only one argument allowed!");
+                    return 1;
+                } else if (nwords == 2) {
+                    if (chdir(words[1]) != 0) {
+                        perror("cd");
+                        return 2;
+                    }
+                }
+            }
         }
     }
 }
@@ -249,7 +296,7 @@ build_str(char const *start, char const *end)
 /* Expands all instances of $! $$ $? and ${param} in a string
  * Returns a newly allocated string that the caller must free
  */
-int foreground_default_status = 0;
+
 char *
 expand(char const *word)
 {

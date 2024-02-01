@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdbool.h>
+#include <limits.h>
 
 
 #ifndef MAX_WORDS
@@ -139,9 +140,21 @@ int main(int argc, char *argv[])
                     fprintf(stderr, "cd: only one argument allowed!");
                     return 1;
                 } else if (nwords == 2) {
+                    char before_dir[PATH_MAX];
+                    if (getcwd(before_dir, sizeof(before_dir)) != NULL) {
+                        fprintf(stderr, "Before cd: %s\n", before_dir);
+                    }else {
+                        perror("getcwd");
+                    }
                     if (chdir(words[1]) != 0) {
                         perror("cd");
                         return 2;
+                    }
+                    char after_dir[PATH_MAX];
+                    if (getcwd(after_dir, sizeof(after_dir)) != NULL) {
+                        fprintf(stderr, "After cd: %s\n", after_dir);
+                    }else {
+                        perror("getcwd");
                     }
                 }
             }

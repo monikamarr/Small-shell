@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdbool.h>
 
+
 #ifndef MAX_WORDS
 #define MAX_WORDS 512
 #endif
@@ -79,6 +80,8 @@ int main(int argc, char *argv[])
         ssize_t line_len = getline(&line, &n, input);
         // if error, print err msg and exit
         if (line_len < 0) err(1, "%s", input_fn);
+
+
 
         // call wordsplit() fcn to split the line into words and store the num of
         // words in nwords
@@ -270,36 +273,6 @@ expand(char const *word)
         }
 
         else if (c == '$'){
-            if (start[1] == '{'){
-                // ignore '${'
-                start += 2;
-                // -1: }
-                size_t paramLen = end - start - 1;
-
-                //dynamically alloc mem for buf param
-                char *buf_param = malloc(paramLen + 1);
-                if (buf_param == NULL) {
-                    fprintf(stderr, "Memory allocation did not work out!\n");
-                    exit(EXIT_FAILURE);
-                }
-                strncpy(buf_param, start, paramLen);
-                // appending null term to the end of string
-                buf_param[paramLen] = '\0';
-                // test the buf param
-                printf("Param: %s\n", buf_param);
-
-                // getting val of environment var
-                char *envVar = getenv(buf_param);
-
-                // test environ var value
-                printf("Environment var val: %s\n", envVar);
-
-                if (envVar == NULL) {
-                    envVar = "";
-                }
-                build_str(envVar, NULL);
-                free(buf_param);
-            }
             // handle the prompt
 //            if (strcmp(start, "PS1") == 0) {
 //                build_str(PS1, NULL);
@@ -314,10 +287,29 @@ expand(char const *word)
             build_str("0", NULL);
         }
         else if (c == '{') {
-            //
-            build_str("<Parameter: ", NULL);
-            build_str(start + 2, end - 1);
+            char *envVar = malloc(end-start);
+            // ignore ${
+            start += 2;
+            size_t paramLen = end - start - 1;
+            strncpy(envVar, start, paramLen);
+            // add null terminator
+            envVar[paramLen] = '\0';
+
+            // get environment var value
+            char *envVal = getenv(envVar);
+            free(envVar);
+
+            if (envVal != NULL) {
+                build_str(envVal, NULL);
+            } else {
+                build_str("", NULL);
+            }
+      //      build_str("<Parameter: ", NULL);
+            build_str(envVar, NULL);
             build_str(">", NULL);
+//            build_str("<Parameter: ", NULL);
+//            build_str(start + 2, end - 1);
+//            build_str(">", NULL);
         }
         pos = end;
         c = param_scan(pos, &start, &end);

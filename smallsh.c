@@ -9,37 +9,13 @@
 #include <string.h>
 #include <stdbool.h>
 #include <limits.h>
+#include <fcntl.h>
 
 
 #ifndef MAX_WORDS
 #define MAX_WORDS 512
 #endif
 
-// redirection operators
-bool tokens(char *word) {
-    switch (word[0]) {
-        case '&':
-            if (strcmp(word, "&") == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        case '>':
-            if (strcmp(word, ">") == 0 || strcmp(word, ">>") == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        case '<':
-            if (strcmp(word, "<") == 0) {
-                return true;
-            } else {
-                return false;
-            }
-        default:
-            return false;
-    }
-}
 int foreground_default_status = 0;
 //array of ptrs to strings with size 512, used to store each word parsed from input
 char *words[MAX_WORDS];
@@ -93,22 +69,21 @@ int main(int argc, char *argv[])
         // words in nwords
         size_t nwords = wordsplit(line);
 
-        /*--------------------------------------------------------
-         * MIGHT STILL NEED IT FOR TESTING, MIGHT NOT
+
+
         // iterate over each word taken from th einput line
-        for (size_t i = 0; i < nwords; ++i) {
-            // print original word into error stream
-            fprintf(stderr, "Word %zu: %s\n", i, words[i]);
-            // call on expand() to expand special params in the word and store the result
-            char *exp_word = expand(words[i]);
-            // free the memory allocated for the original word
-            free(words[i]);
-            // update words[] arr with the expanded word
-            words[i] = exp_word;
-            // print expanded word to error stream
-            fprintf(stderr, "Expanded Word %zu: %s\n", i, words[i]);
-        }
-         -----------------------------------------------------------*/
+//        for (size_t i = 0; i < nwords; ++i) {
+//            // print original word into error stream
+//            fprintf(stderr, "Word %zu: %s\n", i, words[i]);
+//            // call on expand() to expand special params in the word and store the result
+//            char *exp_word = expand(words[i]);
+//            // free the memory allocated for the original word
+//            free(words[i]);
+//            // update words[] arr with the expanded word
+//            words[i] = exp_word;
+//            // print expanded word to error stream
+//            fprintf(stderr, "Expanded Word %zu: %s\n", i, words[i]);
+//        }
 
         // arguments passed to the shell
         if (nwords > 0) {
@@ -156,8 +131,8 @@ int main(int argc, char *argv[])
 //                        perror("getcwd");
 //                    }
                     if (chdir(words[1]) != 0) {
-                        perror("cd");
-                        return 2;
+                        fprintf(stderr, "CD error!");
+                        exit(EXIT_FAILURE);
                     }
 //                    char after_dir[PATH_MAX];
 //                    if (getcwd(after_dir, sizeof(after_dir)) != NULL) {
@@ -183,10 +158,23 @@ int main(int argc, char *argv[])
                                 // input
                                 if (strcmp(words[i], "<") == 0){
                                     // check if filename shows after <
-                                    // don't know how yet
-                                    // else:
-//                                    fprintf(stderr, "No file after '<'!");
-//                                    exit(EXIT_FAILURE);
+                                    if (i < nwords - 1) {
+                                        const char *filename = words[i + 1];
+                                        int file_dp = open(filename, O_RDONLY);
+                                        if (file_dp == -1) {
+                                            fprintf(stderr, "Issues with open!");
+                                        }
+                                        if (dup2(file_dp, STDIN_FILENO) == -1){
+                                            fprintf(stderr, "issue with dup2");
+                                            close(file_dp);
+                                        }
+                                        close(file_dp);
+                                        // skip next filenames
+                                        i ++;
+                                    } else {
+                                        fprintf(stderr, "No file after '<' provided!\n");
+                                    }
+
                                 // handle output redirection
                                 } else if (strcmp(words[i], ">") == 0)  {
                                     // make sure there is filename after >

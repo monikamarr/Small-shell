@@ -170,19 +170,51 @@ int main(int argc, char *argv[])
                                         }
                                         close(file_dp);
                                         // skip next filenames
-                                        i ++;
+                                        i++;
                                     } else {
                                         fprintf(stderr, "No file after '<' provided!\n");
                                     }
 
                                 // handle output redirection
                                 } else if (strcmp(words[i], ">") == 0)  {
+                                    if (i < nwords - 1) {
+                                        const char *filename = words[i + 1];
+                                        int file_dp = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+                                        if (file_dp == -1){
+                                            fprintf(stderr, "open error");
+                                        }
+                                        if (dup2(file_dp, STDOUT_FILENO) == -1) {
+                                            fprintf(stderr, "dup2 issue");
+                                            close(file_dp);
+                                        }
+                                        close(file_dp);
+                                        i++;
+                                    } else {
+                                        fprintf(stderr, "no file provided after > !!");
+                                    }
                                     // make sure there is filename after >
                                     // if not, failure
                                 // check for bg op &
-                                } else if (strcmp(words[i], "&") == 0) {
+                                } else if (strcmp(words[i], ">>") == 0)  {
+                                    if (i < nwords - 1) {
+                                        const char *filename = words[i + 1];
+                                        int file_dp = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0777);
+                                        if (file_dp == -1){
+                                            fprintf(stderr, "open error");
+                                        }
+                                        if (dup2(file_dp, STDOUT_FILENO) == -1) {
+                                            fprintf(stderr, "dup2 issue");
+                                            close(file_dp);
+                                        }
+                                        close(file_dp);
+                                        i++;
+                                    } else {
+                                        fprintf(stderr, "no file provided after > !!");
+                                    }
+                                //else if (strcmp(words[i], "&") == 0) {
                                     // set background to something?
                                 }
+
                             }
 
                             // execute the cmd in child process

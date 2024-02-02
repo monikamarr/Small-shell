@@ -166,19 +166,36 @@ int main(int argc, char *argv[])
 //                        perror("getcwd");
 //                    }
                 }
-                int childStatus;
-                // forking
-                pid_t pid = fork();
+                else {
+                    int childStatus;
+                    // forking
+                    pid_t pid = fork();
 
-                switch (pid) {
-                    case -1:
-                        // error, wrong pid
-                        fprintf(stderr, "Fork error!!\n");
-                        exit(EXIT_FAILURE);
-                        break;
-                    case 0:
-                        //redirection
-                        for (size_t i = 0; i < nwords; ++i) {
+                    switch (pid) {
+                        case -1:
+                            // error, wrong pid
+                            fprintf(stderr, "Fork error!!\n");
+                            exit(EXIT_FAILURE);
+                            break;
+                        case 0:
+                            //redirection
+                            for (size_t i = 0; i < nwords; ++i) {
+                                // input
+                                if (strcmp(words[i], "<") == 0){
+                                    // check if filename shows after <
+                                    // don't know how yet
+                                    // else:
+//                                    fprintf(stderr, "No file after '<'!");
+//                                    exit(EXIT_FAILURE);
+                                // handle output redirection
+                                } else if (strcmp(words[i], ">") == 0)  {
+                                    // make sure there is filename after >
+                                    // if not, failure
+                                // check for bg op &
+                                } else if (strcmp(words[i], "&") == 0) {
+                                    // set background to something?
+                                }
+                            }
 
                             // execute the cmd in child process
                             execvp(words[0], words);
@@ -186,13 +203,15 @@ int main(int argc, char *argv[])
                             fprintf(stderr, "Execvp error!!\n");
                             exit(EXIT_FAILURE);
                             break;
-                            default:
-                                // parent process
-                                pid = waitpid(pid, &childStatus, 0);
-                            exit(0);
+                        default:
+                            // parent process
+                            pid = waitpid(pid, &childStatus, 0);
+                            if (pid == -1) {
+                                fprintf(stderr, "waitpid failed!!!!");
+                                exit(EXIT_FAILURE);
+                            }
                             break;
-                        }
-
+                    }
 
 
                 }

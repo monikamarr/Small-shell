@@ -78,35 +78,7 @@ int main(int argc, char *argv[])
         if (input == stdin) {
             fprintf(stderr, "%s", PS1);
         }
-        int childStatus;
-        // forking
-        pid_t pid = fork();
 
-        switch (pid) {
-            case -1:
-                // error, wrong pid
-                fprintf(stderr, "Fork error!!\n");
-                exit(EXIT_FAILURE);
-                break;
-            case 0:
-                //redirection
-                // for (size_t i = 0; i < nwords; ++i){
-            // execute the cmd in child process
-                execvp(words[0], words);
-                // handle the failure of execvp
-                fprintf(stderr, "Execvp error!!\n");
-                exit(EXIT_FAILURE);
-                break;
-            default:
-                // parent process
-                pid = waitpid(pid, &childStatus, 0);
-                exit(0);
-                break;
-        }
-
-
-
-        }
 
 
 
@@ -120,6 +92,9 @@ int main(int argc, char *argv[])
         // call wordsplit() fcn to split the line into words and store the num of
         // words in nwords
         size_t nwords = wordsplit(line);
+
+        /*--------------------------------------------------------
+         * MIGHT STILL NEED IT FOR TESTING, MIGHT NOT
         // iterate over each word taken from th einput line
         for (size_t i = 0; i < nwords; ++i) {
             // print original word into error stream
@@ -133,6 +108,8 @@ int main(int argc, char *argv[])
             // print expanded word to error stream
             fprintf(stderr, "Expanded Word %zu: %s\n", i, words[i]);
         }
+         -----------------------------------------------------------*/
+
         // arguments passed to the shell
         if (nwords > 0) {
             // check if exit was typed
@@ -140,7 +117,7 @@ int main(int argc, char *argv[])
                 // check if there was more than one arg passed w exit
                 if (nwords > 2) {
                     fprintf(stderr, "exit: too many args passed w exit, only one allowed!");
-                    return 1;
+                    exit(EXIT_FAILURE);
                 } else {
                     if (nwords == 1) {
                         return foreground_default_status;
@@ -150,7 +127,7 @@ int main(int argc, char *argv[])
                         for (size_t i = 0; i< argumentLen; ++i){
                             if (!isdigit(words[1][i])) {
                                 fprintf(stderr, "exit: arg is not an int and it should be!!!");
-                                return 1;
+                                exit(EXIT_FAILURE);
                             }
                         }
                         // got to convert the arg to integer
@@ -170,7 +147,7 @@ int main(int argc, char *argv[])
                 // more than one arg provided, throw error
                 if (nwords > 2) {
                     fprintf(stderr, "cd: only one argument allowed!");
-                    return 1;
+                    exit(EXIT_FAILURE);
                 } else if (nwords == 2) {
 //                    char before_dir[PATH_MAX];
 //                    if (getcwd(before_dir, sizeof(before_dir)) != NULL) {
@@ -188,6 +165,36 @@ int main(int argc, char *argv[])
 //                    }else {
 //                        perror("getcwd");
 //                    }
+                }
+                int childStatus;
+                // forking
+                pid_t pid = fork();
+
+                switch (pid) {
+                    case -1:
+                        // error, wrong pid
+                        fprintf(stderr, "Fork error!!\n");
+                        exit(EXIT_FAILURE);
+                        break;
+                    case 0:
+                        //redirection
+                        for (size_t i = 0; i < nwords; ++i) {
+
+                            // execute the cmd in child process
+                            execvp(words[0], words);
+                            // handle the failure of execvp
+                            fprintf(stderr, "Execvp error!!\n");
+                            exit(EXIT_FAILURE);
+                            break;
+                            default:
+                                // parent process
+                                pid = waitpid(pid, &childStatus, 0);
+                            exit(0);
+                            break;
+                        }
+
+
+
                 }
             }
         }

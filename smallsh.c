@@ -78,6 +78,38 @@ int main(int argc, char *argv[])
         if (input == stdin) {
             fprintf(stderr, "%s", PS1);
         }
+        int childStatus;
+        // forking
+        pid_t pid = fork();
+
+        switch (pid) {
+            case -1:
+                // error, wrong pid
+                fprintf(stderr, "Fork error!!\n");
+                exit(EXIT_FAILURE);
+                break;
+            case 0:
+                //redirection
+                // for (size_t i = 0; i < nwords; ++i){
+            // execute the cmd in child process
+                execvp(words[0], words);
+                // handle the failure of execvp
+                fprintf(stderr, "Execvp error!!\n");
+                exit(EXIT_FAILURE);
+                break;
+            default:
+                // parent process
+                pid = waitpid(pid, &childStatus, 0);
+                exit(0);
+                break;
+        }
+
+
+
+        }
+
+
+
         // read line from the input (from file or stdin)
         ssize_t line_len = getline(&line, &n, input);
         // if error, print err msg and exit
@@ -140,22 +172,22 @@ int main(int argc, char *argv[])
                     fprintf(stderr, "cd: only one argument allowed!");
                     return 1;
                 } else if (nwords == 2) {
-                    char before_dir[PATH_MAX];
-                    if (getcwd(before_dir, sizeof(before_dir)) != NULL) {
-                        fprintf(stderr, "Before cd: %s\n", before_dir);
-                    }else {
-                        perror("getcwd");
-                    }
+//                    char before_dir[PATH_MAX];
+//                    if (getcwd(before_dir, sizeof(before_dir)) != NULL) {
+//                        fprintf(stderr, "Before cd: %s\n", before_dir);
+//                    }else {
+//                        perror("getcwd");
+//                    }
                     if (chdir(words[1]) != 0) {
                         perror("cd");
                         return 2;
                     }
-                    char after_dir[PATH_MAX];
-                    if (getcwd(after_dir, sizeof(after_dir)) != NULL) {
-                        fprintf(stderr, "After cd: %s\n", after_dir);
-                    }else {
-                        perror("getcwd");
-                    }
+//                    char after_dir[PATH_MAX];
+//                    if (getcwd(after_dir, sizeof(after_dir)) != NULL) {
+//                        fprintf(stderr, "After cd: %s\n", after_dir);
+//                    }else {
+//                        perror("getcwd");
+//                    }
                 }
             }
         }

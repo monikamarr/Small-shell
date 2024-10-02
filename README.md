@@ -71,10 +71,10 @@ You can run a test script test_smallsh.sh to check the behavior of the shell for
 > Expected Output: output is written to output.txt
 - Append Output
 `echo "Appended text" >> output.txt`
-Expected Output: text is appended to output.txt
+> Expected Output: text is appended to output.txt
 - PID Expansion
 `echo $$`
 > Expected Output: the PID of the current shell.
--Exit Status
+- Exit Status
 `exit 42`
 > Expected Output: Shell exits with status 42.

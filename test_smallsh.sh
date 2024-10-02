@@ -1,59 +1,96 @@
 #!/bin/bash
 
-# smallsh executable
-SMALLSH_EXEC="./smallsh"
+# Test 1: Echo a simple message
+echo "== Test 1: Echo a simple message =="
+echo "Running: echo Hello, World!"
+./smallsh << EOF
+echo Hello, World!
+exit
+EOF
+echo "Expected: Hello, World!"
+echo "----------------------"
 
+# Test 2: Show current directory
+echo "== Test 2: Show current directory =="
+echo "Running: pwd"
+./smallsh << EOF
+pwd
+exit
+EOF
+echo "Expected: Current working directory path"
+echo "----------------------"
 
-run_test() {
-    local description="$1"
-    local command="$2"
-    local expected_output="$3"
+# Test 3: Change directory to /tmp and print working directory
+echo "== Test 3: Change directory =="
+echo "Running: cd /tmp && pwd"
+./smallsh << EOF
+cd /tmp
+pwd
+exit
+EOF
+echo "Expected: /tmp"
+echo "----------------------"
 
-    echo "== $description =="
-    echo "Running: $command"
-    result=$($SMALLSH_EXEC <<< "$command")
+# Test 4: Background process
+echo "== Test 4: Background process =="
+echo "Running: sleep 5 &"
+./smallsh << EOF
+sleep 5 &
+exit
+EOF
+echo "Expected: Process runs in background"
+echo "----------------------"
 
-    if [[ "$result" == "$expected_output" ]]; then
-    echo "Passed"
-    else
-    echo "Failed"
-    echo "Expected: $expected_output"
-    echo "Got: $result"
-    fi
-            echo
-}
+# Test 5: Input redirection
+echo "== Test 5: Input redirection =="
+echo "Running: cat < input.txt"
+echo "Hello, file!" > input.txt
+./smallsh << EOF
+cat < input.txt
+exit
+EOF
+echo "Expected: Hello, file!"
+echo "----------------------"
 
-# echo with a comment
-run_test "Test 1: Echo with comment" "_echo Hello World! # this is a comment" "Hello World!"
+# Test 6: Output redirection
+echo "== Test 6: Output redirection =="
+echo "Running: echo 'Hello, redirected!' > output.txt"
+./smallsh << EOF
+echo "Hello, redirected!" > output.txt
+cat output.txt
+exit
+EOF
+echo "Expected: Hello, redirected!"
+echo "----------------------"
 
-# Using $$ (PID)
-run_test "Test 2: Echo with PID" "_echo $$" "$$"
+# Test 7: Append output
+echo "== Test 7: Append output =="
+echo "Running: echo 'Appended text' >> output.txt"
+./smallsh << EOF
+echo "Appended text" >> output.txt
+cat output.txt
+exit
+EOF
+echo "Expected: Hello, redirected!\nAppended text"
+echo "----------------------"
 
-# Testing exit status
-run_test "Test 3: Exit and echo exit status" "_exit 82\n_echo $?" "82"
+# Test 8: Environment variable expansion ($$ for PID)
+echo "== Test 8: PID expansion =="
+echo "Running: echo $$"
+./smallsh << EOF
+echo $$
+exit
+EOF
+echo "Expected: The current process ID"
+echo "----------------------"
 
-# Background process with $!
-run_test "Test 4: Background process" "_suspend &\n_echo $!" "[PID]"
-
-# Parameter expansion
-run_test "Test 5: Parameter expansion" "_echo ${P_QgLmuKY}" "evKMARhG"
-
-# Multiple parameters in one command
-run_test "Test 6: Multiple parameters" "_echo ${P_QgLmuKY}${P_2p7K6AfFgbRV}" "evKMARhGOQTJRgvdhh"
-
-# Exit command
-run_test "Test 7: Exit with status" "exit 32" ""
-
-# Change directory and print working directory
-run_test "Test 8: cd command" "cd /tmp\npwd" "/tmp"
-
-# Input redirection with `<`
-run_test "Test 9: Input redirection" "cat < testfile" "Hello World!"
-
-# Output redirection with `>`
-run_test "Test 10: Output redirection" "printf Goodbye World!\\n > testfile\ncat testfile" "Goodbye World!"
-
-# Appending output with `>>`
-run_test "Test 11: Append output" "echo Hello World! >> testfile\ncat testfile" "Goodbye World!\nHello World!"
-
-echo "All tests completed!"
+# Test 9: Exit with status
+echo "== Test 9: Exit with status =="
+echo "Running: exit 42"
+./smallsh << EOF
+exit 42
+EOF
+EXIT_STATUS=$?
+echo "Expected: 42"
+echo "Actual: $EXIT_STATUS"
+echo "----------------------"

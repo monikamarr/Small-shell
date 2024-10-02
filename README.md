@@ -78,3 +78,6 @@ You can run a test script test_smallsh.sh to check the behavior of the shell for
 - Exit Status
 `exit 42`
 > Expected Output: Shell exits with status 42.
+
+
+![Demo of the shell][https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcnNsZzFheXBhZGR6bXN6bGZoeTVsaHU2azhnNmo4a29jdzVzazE3NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wfrL91qkBambWzCa7K/giphy.gif]

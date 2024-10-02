@@ -1,15 +1,8 @@
-# Smallsh - A Small Shell Implementation
-## Overview
-**smallsh** is a simple Unix-like shell implementation written in C. 
-It provides basic shell functionalities like executing commands, handling built-in commands (`_echo`, `_exit`, `_cd`), input/output redirection, and background job processing.
-The shell mimics some of the functionality of a bash-like shell but with a minimal set of features.
+# Smallsh 
+**smallsh** is a simple command-line shell written in C. It supports a number of built-in commands such as `cd`, `exit`, and handles environment variable expansion, input/output redirection, and background processes.
 
 ## Features
-- Runs system commands such as `ls`, `cat`, etc., using execvp().
-- Mimics Built-in Commands
-  - `_echo` prints its arguments to standard output.
-  - `_exit [status]` exits the shell with the given exit status (defaults to 0).
-  - `_cd [directory]` changes the working directory. Defaults to the home directory if no argument is provided.
+- Runs system commands such as `ls`, `cd`, etc., using execvp().
 - Supports < to redirect input from a file.
 - Supports > and >> to redirect output to a file (overwrite and append modes).
 - Commands ending with & will run in the background.
@@ -23,9 +16,9 @@ To start the shell, compile the code and run the smallsh executable:
 
 ### Built-in Commands
 
-`_echo Hello World!`
-`_exit 0`
-`_cd /tmp`
+`echo Hello World!`
+`exit 0`
+`cd /tmp`
 
 ### Input and Output Redirection
 
@@ -56,3 +49,32 @@ You can run a test script test_smallsh.sh to check the behavior of the shell for
 
 * Run the script:
 `./test_smallsh.sh`
+
+## Test Cases Covered:
+- Echo Command
+`echo Hello, World!`
+> Expected Output: Hello, World!
+- Show Current Directory
+`pwd`
+> Expected Output: current working directory path
+- Change Directory
+`cd /tmp && pwd`
+> Expected Output: /tmp
+- Background Process
+`sleep 5 &`
+> Expected Output: Command runs in the background.
+- Input Redirection
+`cat < input.txt`
+> Expected Output: contents of input.txt.
+- Output Redirection
+`echo "Hello, redirected!" > output.txt`
+> Expected Output: output is written to output.txt
+- Append Output
+`echo "Appended text" >> output.txt`
+Expected Output: text is appended to output.txt
+- PID Expansion
+`echo $$`
+> Expected Output: the PID of the current shell.
+-Exit Status
+`exit 42`
+> Expected Output: Shell exits with status 42.

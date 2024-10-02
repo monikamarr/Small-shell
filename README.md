@@ -80,4 +80,4 @@ You can run a test script test_smallsh.sh to check the behavior of the shell for
 > Expected Output: Shell exits with status 42.
 
 
-![Demo of the shell](https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExcnNsZzFheXBhZGR6bXN6bGZoeTVsaHU2azhnNmo4a29jdzVzazE3NSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wfrL91qkBambWzCa7K/giphy.gif)
+![Demo of the shell](https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExMHN4ODR0aTF3bXMxcHRkZHJ2ZzVrejBvOXNkMWl3N29iMTc0cHVqZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Ka8Ql6bjFB1dGEEBs8/giphy.gif)

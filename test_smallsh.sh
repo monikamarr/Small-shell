@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Test 1: Echo a simple message
+
 echo "== Test 1: Echo a simple message =="
 echo "Running: echo Hello, World!"
 ./smallsh << EOF
@@ -10,7 +10,7 @@ EOF
 echo "Expected: Hello, World!"
 echo "----------------------"
 
-# Test 2: Show current directory
+
 echo "== Test 2: Show current directory =="
 echo "Running: pwd"
 ./smallsh << EOF
@@ -20,7 +20,7 @@ EOF
 echo "Expected: Current working directory path"
 echo "----------------------"
 
-# Test 3: Change directory to /tmp and print working directory
+
 echo "== Test 3: Change directory =="
 echo "Running: cd /tmp && pwd"
 ./smallsh << EOF
@@ -31,7 +31,7 @@ EOF
 echo "Expected: /tmp"
 echo "----------------------"
 
-# Test 4: Background process
+
 echo "== Test 4: Background process =="
 echo "Running: sleep 5 &"
 ./smallsh << EOF
@@ -41,7 +41,6 @@ EOF
 echo "Expected: Process runs in background"
 echo "----------------------"
 
-# Test 5: Input redirection
 echo "== Test 5: Input redirection =="
 echo "Running: cat < input.txt"
 echo "Hello, file!" > input.txt
@@ -52,7 +51,7 @@ EOF
 echo "Expected: Hello, file!"
 echo "----------------------"
 
-# Test 6: Output redirection
+
 echo "== Test 6: Output redirection =="
 echo "Running: echo 'Hello, redirected!' > output.txt"
 ./smallsh << EOF
@@ -63,7 +62,7 @@ EOF
 echo "Expected: Hello, redirected!"
 echo "----------------------"
 
-# Test 7: Append output
+
 echo "== Test 7: Append output =="
 echo "Running: echo 'Appended text' >> output.txt"
 ./smallsh << EOF
@@ -74,7 +73,7 @@ EOF
 echo "Expected: Hello, redirected!\nAppended text"
 echo "----------------------"
 
-# Test 8: Environment variable expansion ($$ for PID)
+
 echo "== Test 8: PID expansion =="
 echo "Running: echo $$"
 ./smallsh << EOF
@@ -84,7 +83,7 @@ EOF
 echo "Expected: The current process ID"
 echo "----------------------"
 
-# Test 9: Exit with status
+
 echo "== Test 9: Exit with status =="
 echo "Running: exit 42"
 ./smallsh << EOF
